@@ -1,0 +1,10 @@
+INstall : 
+
+Installer Node.js puis effectuer
+
+npm install express
+npm install web3
+npm install socket.io
+
+ensuite exécuter la commande (pour ): node server.js
+disponible après sur http://localhost:8333/index.html

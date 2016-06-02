@@ -1,0 +1,160 @@
+<!doctype html>
+<html class="no-js">
+<head>
+	<meta charset="utf-8">
+	<title>Coopte Un DEV</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./lib/bootstrap/css/bootstrap-theme.css">
+	<link rel="stylesheet" href="./css/style.css">
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	
+	</script>
+</head>
+<body ng-app="CoopteUnDevApp" ng-controller="CoopteUnDevCtrl">
+	
+	<div class="header">
+		<div id="main-header" class="container">
+			<img src="./img/ban.png" class="hidden-xs"/>
+			<span class="title visible-xs-block">Coopte un Dev App</span>
+		</div>
+	</div>
+	
+		
+	<div class="body">
+		<main id="main-body" class="container" >
+		
+			<button type="button" class="btn btn-primary" ng-click="getWinners()">Lancer Loterie</button>
+			
+			<form name="cooptForm" class="col-xs-10 col-xs-offset-1">
+				<h3>Identité du coopté</h3>
+				
+				<div>
+					<div class="col-xs-12 col-sm-2 col-md-2">
+						<select class="form-control" ng-model="userCoopte.civilite" required="true">
+							<option value="" disabled hidden>Civilité</option>
+							<option value="M.">M.</option>
+							<option value="Mme.">Mme.</option>
+						</select>
+					</div>
+					<div class="col-xs-12 col-sm-4 col-md-3">
+						<input id="nameInput" type="text" ng-model="userCoopte.nom"  class="form-control" placeholder="Nom" required="true">
+					</div>
+					<div class="col-xs-12 col-sm-4 col-md-3">
+						<input id="surnameInput" type="text" ng-model="userCoopte.prenom"  class="form-control" placeholder="Prénom" required="true">
+					</div>
+					<div class="col-xs-12 col-sm-1 col-md-1">
+						<button type="button" class="btn btn-primary" ng-click="add()">Ajouter</button>
+					</div>
+				</div>
+			</form>
+			
+			<div ng-show="listeCoopte.length > 0" class="col-xs-10 col-xs-offset-1"> 
+				<hr/>
+				<h3>Listes des cooptés</h3>
+				<table class="table"> 
+					<thead> 
+						<tr class="hidden-xs"> 
+							<th>#</th>
+							<th>Civilité</th>
+							<th>Nom</th>
+							<th>Prenom</th>
+							<th>Jeton</th>
+							<th></th>
+						</tr> 
+					</thead> 
+					<tbody> 
+						<tr ng-repeat="item in listeCoopte"> 
+							<td class="hidden-xs">{{$index + 1}}</td> 
+							<td class="hidden-xs">{{item.civilite}}</td> 
+							<td class="hidden-xs">{{item.nom}}</td> 
+							<td class="hidden-xs">{{item.prenom}}</td> 
+							<td class="hidden-xs">{{item.jeton}}</td> 
+							<td class="hidden-xs"  align="right"><button type="button" class="btn btn-primary" ng-click="delete($index + 1)">Supprimer</button></td> 
+							
+							<td class="visible-xs-block">
+							 {{item.civilite}}
+							 {{item.nom}}
+							 {{item.prenom}}
+							 {{item.jeton}}
+							</td>
+						</tr>
+						
+					</tbody>
+					<tfoot>
+						<tr class="text-right">
+							<td colspan="5" class="hidden-xs">Total de cooptation : {{listeCoopte.length}} personne(s)</td>
+							<td class="visible-xs-block">{{listeCoopte.length}} personne(s)</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			
+			<!-- Modal erreur saisie-->
+			<div class="modal fade" id="erreurSaisieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 class="modal-title" id="myModalLabel">Erreur de saisie</h4>
+						</div>
+						<div class="modal-body">
+							Veuillez saisir toutes les informations
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Modal résultat gagnant-->
+			<div class="modal fade" id="gagnantModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 class="modal-title" id="myModalLabel">Gagnant</h4>
+						</div>
+						<div class="modal-body">
+							<div ng-show="listeCoopte.length > 0" class="col-xs-12"> 
+								<hr/>
+								<h3>Listes des gagnants</h3>
+								<table class="table"> 
+									<thead> 
+										<tr class="hidden-xs"> 
+											<th>Lot</th>
+											<th>Gagnant</th>
+										</tr> 
+									</thead> 
+									<tbody style=" height: 100%;"> 
+										<tr ng-repeat="item in listeGains"> 
+											<td class="hidden-xs">{{item.lot.nom}}</td> 
+											<td class="hidden-xs">{{item.gagnant.nom+" "+item.gagnant.prenom}}</td> 
+											
+											<td class="visible-xs-block">
+											 {{item.lot.nom}}
+											 {{item.gagnant.nom}}
+											 {{item.gagnant.prenom}}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+		</main>
+	</div>
+	
+	
+	<!-- Lib JS -->
+	<script src="./lib/jquery/dist/jquery.js"></script>
+	<script src="./lib/angular/angular.min.js"></script>
+	<script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+	
+	<!-- JS interne -->
+	<script src="./app.js"></script>
+	</body>
+</html>
